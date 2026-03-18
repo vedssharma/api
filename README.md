@@ -10,6 +10,8 @@ A command-line HTTP client written in Go for making API requests, managing reque
 - **Collections**: Organize related requests into collections and run them as a batch
 - **Color Output**: Pretty-printed JSON responses with color-coded status indicators
 - **File Support**: Load request bodies from files using `@filename` syntax
+- **Postman Export**: Export collections or history to Postman Collection v2.1 JSON
+- **Postman Import**: Import Postman Collection v2.0/v2.1 JSON files into apicli
 
 ## Installation
 
@@ -145,6 +147,39 @@ apicli collection run my-api
 apicli collection delete my-api
 ```
 
+### Postman Export
+
+Export your apicli collections or history to a Postman Collection v2.1 JSON file.
+
+```bash
+# Export all collections to stdout
+apicli export postman
+
+# Export a specific collection
+apicli export postman --collection my-api
+
+# Export request history
+apicli export postman --history
+
+# Write output to a file
+apicli export postman --collection my-api --output my-api.postman.json
+apicli export postman --output all-collections.postman.json
+```
+
+### Postman Import
+
+Import a Postman Collection v2.0 or v2.1 JSON file into apicli. Nested folders are flattened and the folder name is prepended to each request name (e.g. `Auth / Login`).
+
+```bash
+# Import using the Postman collection's own name
+apicli import postman my-api.postman_collection.json
+
+# Import into a specific collection name
+apicli import postman my-api.postman_collection.json --collection staging
+```
+
+If a collection with the target name already exists, imported requests are appended to it.
+
 ## Configuration
 
 Data is stored in `~/.apicli/`:
@@ -168,7 +203,9 @@ docker-compose run --rm apicli <command>
 │   ├── request.go         # HTTP method commands
 │   ├── alias.go           # Endpoint alias management
 │   ├── collection.go      # Collection management
-│   └── history.go         # History commands
+│   ├── history.go         # History commands
+│   ├── export.go          # Postman export command
+│   └── import.go          # Postman import command
 ├── internal/              # Internal packages
 │   ├── model/             # Data structures
 │   ├── http/              # HTTP client wrapper
